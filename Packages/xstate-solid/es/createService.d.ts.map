@@ -1,0 +1,1 @@
+{"version":3,"file":"createService.d.ts","sourceRoot":"","sources":["../src/createService.ts"],"names":[],"mappings":"AAAA,OAAO,KAAK,EAAE,eAAe,EAAE,eAAe,EAAE,MAAM,QAAQ,CAAC;AAE/D,OAAO,KAAK,EAAE,UAAU,EAAE,MAAM,SAAS,CAAC;AAI1C,wBAAgB,aAAa,CAAC,QAAQ,SAAS,eAAe,EAC5D,OAAO,EAAE,QAAQ,EACjB,GAAG,CAAC,OAAY,CAAC,EAAE,UAAU,CAAC,QAAQ,CAAC,GACtC,eAAe,CAAC,QAAQ,CAAC,CAiC3B"}

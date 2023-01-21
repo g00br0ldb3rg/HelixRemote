@@ -1,0 +1,61 @@
+{"$schema":"https://json.schemastore.org/tsconfig.json",
+
+  "compilerOptions": {
+		"baseUrl": "./",
+
+		"paths": {
+			"Styles/*": ["./src/Styles/*"],
+			"~/*":      ["./src/*"       ]
+		},
+
+		"target": "ESNext",
+		"module": "ESNext",
+
+		"lib": [
+			"ESNext",
+			"DOM",
+			"ScriptHost"
+		],
+
+		"types": [
+			"node",
+			"webmidi",
+			"vite/client",
+			"unplugin-icons/types/solid"
+		],
+
+		"moduleResolution": "Node",
+		"jsxImportSource":  "solid-js",
+		"jsx":              "preserve",
+
+		"skipLibCheck":        true,
+		"skipDefaultLibCheck": true,
+
+		"allowJs":                      true,
+		"allowSyntheticDefaultImports": true,
+		"downlevelIteration":           true,
+		"emitDecoratorMetadata":        true,
+		"esModuleInterop":              true,
+		"experimentalDecorators":       true,
+		"isolatedModules":              true,
+		"resolveJsonModule":            true,
+		"useDefineForClassFields":      true,
+
+		"forceConsistentCasingInFileNames":   true,
+		"noFallthroughCasesInSwitch":         true,
+		"noImplicitAny":                      true,
+		"noImplicitOverride":                 true,
+		"noImplicitReturns":                  true,
+		"noImplicitThis":                     true,
+		"noPropertyAccessFromIndexSignature": true,
+		"noStrictGenericChecks":              true,
+		"noUncheckedIndexedAccess":           true,
+		"noUnusedLocals":                     false,
+		"noUnusedParameters":                 false,
+		"strictBindCallApply":                true,
+		"strictFunctionTypes":                true,
+		"strictNullChecks":                   true,
+		"strictPropertyInitialization":       true
+  }
+
+}
