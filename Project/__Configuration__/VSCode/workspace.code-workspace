@@ -16,7 +16,7 @@
 //####################################################################################################################//
 
 	"settings": {
-		"window.title": "__PROJECT_NAME__",
+		"window.title": "HelixRemote",
 
 		"editor.tabSize":           2,
 		"editor.insertSpaces":      false,

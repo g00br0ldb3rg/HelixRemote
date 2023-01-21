@@ -31,6 +31,8 @@
 		"@fontsource/exo-2":                "4.5.11",
 
 		"xstate":                           "4.35.2",
+		"@xstate/graph":                    "1.4.2",
+		"@xstate/inspect":                  "0.7.0",
 		"@xstate/solid":                    "file:../Packages/xstate-solid/",
 
 		"tone":                             "14.7.77",
