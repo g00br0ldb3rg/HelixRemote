@@ -1,6 +1,7 @@
 //###  NPM  ###//
 import Icons                    from "unplugin-icons/vite"
 import {defineConfig}           from "vite"
+import Environment              from "vite-plugin-environment"
 import Solid                    from "vite-plugin-solid"
 import Resolve_TSConfig_Aliases from "vite-tsconfig-paths"
 
@@ -14,6 +15,10 @@ import Resolve_TSConfig_Aliases from "vite-tsconfig-paths"
 		plugins: [
 			Resolve_TSConfig_Aliases(),
 
+			Environment([
+				"ExecutionContext",
+			]),
+
 			Icons({
 				compiler:     "solid",
 				defaultClass: "ICON",
@@ -25,13 +30,13 @@ import Resolve_TSConfig_Aliases from "vite-tsconfig-paths"
 		],
 
 		server: {
-			//host:       "0.0.0.0",
+			host:       "0.0.0.0",
 			port:       3000,
 			strictPort: true,
 		},
 
 		build: {
-			target: "ESNext"
+			target: "ESNext",
 		},
 
 	});

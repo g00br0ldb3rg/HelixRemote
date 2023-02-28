@@ -6,6 +6,7 @@ console.clear()
 import {ModeTransitions} from "./App/Machines/ModeTransitions/index.js"
 
 //###  NPM  ###//
+import {isEqual} from "lodash-es"
 import {interpret} from "xstate"
 import {
 	getSimplePaths,
@@ -21,34 +22,43 @@ import {
 
 	const modeTransitions = interpret(ModeTransitions)
 	modeTransitions.start()
-	modeTransitions.send("TO_EDIT")
+	modeTransitions.send("TO_STOMPS")
 	modeTransitions.send("TO_LOOPER")
 	const state = modeTransitions.getSnapshot()
 
 	let matched = false
 
-	const basePaths = getShortestPaths(ModeTransitions, {
-		filter: ((state) => {
+	const history = state.context._history
 
-			return false
-		})
+	const basePaths = getShortestPaths(ModeTransitions, {
+		//filter: ((state) => {
+
+		//	return false
+		//})
 		//events: {},
 	})
 
-	for(const [key, basePath] of Object.entries(basePaths)){
-		console.log(`@@@ ${key}`)
-		for(const path of basePath.paths){
-			console.log(`  @ Segment`)
-			for(const segment of path.segments){
-				console.log(segment.event)
-			}
-		}
-		//if(HistoryString(basePath.state.context) == "Presets"){
-		//	console.log({key})
-		//	//console.log({key, ...basePath})
-		//	console.log(basePath.paths)
-		//}
-	}
+	const target =
+		Object.values(basePaths)
+		.filter(path => isEqual(history, path.state.context._history))
+		//.filter(path => isEqual(history, path.paths[0]?.segments[0]?.state.context._history))
+
+	target
+
+	//for(const [key, basePath] of Object.entries(basePaths)){
+	//	//console.log(`@@@ ${key}`)
+	//	for(const path of basePath.paths){
+	//		//console.log(`  @ Segment`)
+	//		for(const segment of path.segments){
+	//			//console.log(segment.event)
+	//		}
+	//	}
+	//	//if(HistoryString(basePath.state.context) == "Presets"){
+	//	//	console.log({key})
+	//	//	//console.log({key, ...basePath})
+	//	//	console.log(basePath.paths)
+	//	//}
+	//}
 
 
 
