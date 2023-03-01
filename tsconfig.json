@@ -4,9 +4,11 @@
 		"baseUrl": "./",
 
 		"paths": {
-			"App/*":    ["./src/App/*"   ],
-			"Styles/*": ["./src/Styles/*"],
-			"~/*":      ["./src/*"       ]
+			"App/*":       ["./src/App/*"      ],
+			"Settings/*":  ["./src/Settings/*" ],
+			"Styles/*":    ["./src/Styles/*"   ],
+			"Utilities/*": ["./src/Utilities/*"],
+			"~/*":         ["./src/*"          ]
 		},
 
 		"target": "ESNext",
@@ -57,6 +59,10 @@
 		"strictFunctionTypes":                true,
 		"strictNullChecks":                   true,
 		"strictPropertyInitialization":       true
-  }
+  },
+
+	"include": [
+		"./src/**/*.ts",  "./src/**/*.tsx"
+	]
 
 }

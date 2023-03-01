@@ -1,12 +1,18 @@
 //###  App  ###//
 import {ModeTransitions} from "./Machines/ModeTransitions/index.js"
-import {Helix          } from "./Utilities/Helix.js"
+import {Helix          } from "Utilities/Helix.js"
+import * as MIDI         from "Utilities/MIDI.js"
+import {useMachine}      from "Utilities/XState-Solid.js"
 
 //###  NPM  ###//
-import {onMount   } from "solid-js"
-import {atom      } from "solid-use"
-import {useMachine} from "@xstate/solid"
-import {inspect   } from "@xstate/inspect"
+import {atom       } from "solid-use"
+import {inspect    } from "@xstate/inspect"
+import {destructure} from "@solid-primitives/destructure"
+import {
+	For,
+	onMount,
+	ParentProps,
+} from "solid-js"
 import {
 	Button,
 	HopeProvider,
@@ -14,11 +20,16 @@ import {
 
 
 //####################################################################################################################//
-//##>  Utilities                                                                                                       ##//
+//##>  Aliases                                                                                                      ##//
 //####################################################################################################################//
 
-	function is_Helix(name:(string | undefined))
-		{return name?.includes("Line 6 Helix")}
+	const {
+		ActualEvent,
+		EnsuredEvent,
+		StateNames: modes,
+	} = ModeTransitions
+
+	const {send_MIDI} = Helix
 
 
 //####################################################################################################################//
@@ -28,13 +39,15 @@ import {
 	export function App(){
 		//inspect({iframe:false})
 
-		const _transitions = useMachine(ModeTransitions, {
+		const modeTransitions = useMachine(ModeTransitions.Machine, {
 			//devTools: true,
 		})
-		const transitions = {
-			state:       _transitions[0],
-			send:        _transitions[1],
-			interpreter: _transitions[2],
+
+		const {state} = modeTransitions
+
+		function send(event:ModeTransitions.EventName){
+			modeTransitions.send(event)
+			console.log(JSON.stringify({"@":"FINISHED", state:state.value}))
 		}
 
 		onMount(async ()=>{
@@ -44,7 +57,7 @@ import {
 
 			const helix =
 				[...midi.outputs.values()]
-				.filter((output) => is_Helix(output.name))[0]
+				.filter((output) => MIDI.Device.is_Helix(output.name))[0]
 
 			if(!helix)
 				{throw Error("Helix not connected")}
@@ -56,68 +69,156 @@ import {
 			<HopeProvider config={{initialColorMode:"dark"}} enableCssReset={false}>
 				<main>
 
-					<section>
-						<h2>{"Modes.Available"}</h2>
-						<Button colorScheme={(transitions.state.context._history.at(-2) == "Edit"     ) ? "accent" : "primary"} disabled={!transitions.state.can("TO_EDIT"     )} onClick={async () => {transitions.send("TO_EDIT"     )}}>EDIT     </Button>
-						<Button colorScheme={(transitions.state.context._history.at(-2) == "Looper"   ) ? "accent" : "primary"} disabled={!transitions.state.can("TO_LOOPER"   )} onClick={async () => {transitions.send("TO_LOOPER"   )}}>LOOPER   </Button>
-						<Button colorScheme={(transitions.state.context._history.at(-2) == "Presets"  ) ? "accent" : "primary"} disabled={!transitions.state.can("TO_PRESETS"  )} onClick={async () => {transitions.send("TO_PRESETS"  )}}>PRESETS  </Button>
-						<Button colorScheme={(transitions.state.context._history.at(-2) == "Snapshots") ? "accent" : "primary"} disabled={!transitions.state.can("TO_SNAPSHOTS")} onClick={async () => {transitions.send("TO_SNAPSHOTS")}}>SNAPSHOTS</Button>
-						<Button colorScheme={(transitions.state.context._history.at(-2) == "Stomps"   ) ? "accent" : "primary"} disabled={!transitions.state.can("TO_STOMPS"   )} onClick={async () => {transitions.send("TO_STOMPS"   )}}>STOMPS   </Button>
-					</section>
+					{/*<Section title="_Modes-Available">
+						<Row>
+							<For each={modes}>{(mode) => (
+								<Button
+									colorScheme = {(state.context._path.at(-2) == mode) ? "accent" : "primary"}
+									disabled    = {!state.nextEvents.includes(ActualEvent(mode))              }
+									onClick     = {() => {send(ActualEvent(mode))}                            }
+								>
+									{ActualEvent(mode)}
+								</Button>
+							)}</For>
+						</Row>
+					</Section>*/}
 
-					<section>
-						<h2>{"Modes.Navigation"}</h2>
-						<Button colorScheme={transitions.state.matches("Edit"     ) ? "success" : "primary"} onClick={async () => {const from = transitions.state.value; console.log({from, to:"Edit"     }); transitions.send("_TO_EDIT"     );}}>EDIT     </Button>
-						<Button colorScheme={transitions.state.matches("Looper"   ) ? "success" : "primary"} onClick={async () => {const from = transitions.state.value; console.log({from, to:"Looper"   }); transitions.send("_TO_LOOPER"   );}}>LOOPER   </Button>
-						<Button colorScheme={transitions.state.matches("Presets"  ) ? "success" : "primary"} onClick={async () => {const from = transitions.state.value; console.log({from, to:"Presets"  }); transitions.send("_TO_PRESETS"  );}}>PRESETS  </Button>
-						<Button colorScheme={transitions.state.matches("Snapshots") ? "success" : "primary"} onClick={async () => {const from = transitions.state.value; console.log({from, to:"Snapshots"}); transitions.send("_TO_SNAPSHOTS");}}>SNAPSHOTS</Button>
-						<Button colorScheme={transitions.state.matches("Stomps"   ) ? "success" : "primary"} onClick={async () => {const from = transitions.state.value; console.log({from, to:"Stomps"   }); transitions.send("_TO_STOMPS"   );}}>STOMPS   </Button>
-					</section>
+					{/*<Section title="_Modes-Navigation">
+						<Row>
+							<For each={modes}>{(mode) => (
+								<Button
+									colorScheme = {state.matches(mode) ? "success" : "primary"}
+									onClick     = {() => {send(EnsuredEvent(mode))}           }
+								>
+									{EnsuredEvent(mode)}
+								</Button>
+							)}</For>
+						</Row>
+					</Section>*/}
+
+					<Section title="Modes">
+						<Row>
+							<For each={modes}>{(mode) => (
+								<Button
+									colorScheme = {state.matches(mode) ? "success" : "primary"}
+									onClick     = {() => {send(EnsuredEvent(mode))}           }
+								>
+									{mode}
+								</Button>
+							)}</For>
+						</Row>
+					</Section>
 
 					<br/>
 
-					<section class="Misc">
-						<h2>{"Misc"}</h2>
-						<div class="Row">
-							<Button onClick={async () => {Helix.send_CC_Values([["Tuner"]])()}}>{"Tuner"}</Button>
-						</div>
-					</section>
+					<Section title="Utilities">
+						<Row>
+							<Button onClick={() => {send_MIDI([["Tuner"]])}}>{"Tuner"}</Button>
+						</Row>
+					</Section>
 
-					<section class="Temp">
-						<div class="Row">
-							<h2>{"Temp.Modes"}</h2>
-							<Button onClick={async () => {Helix.send_CC_Values([["Mode_Stomps" ]])()}}>{"Stomps"   }</Button>
-							<Button onClick={async () => {Helix.send_CC_Values([["Mode_Default"]])()}}>{"Snapshots"}</Button>
-							<Button onClick={async () => {Helix.send_CC_Values([["Mode_Edit"   ]])()}}>{"Edit"     }</Button>
-							<Button onClick={async () => {Helix.send_CC_Values([["Mode_Toggle" ]])()}}>{"Toggle"   }</Button>
-						</div>
-						<div class="Row">
-							<h2>{"Temp.Misc"}</h2>
-							<Button onClick={async () => {Helix.send_CC_Values([["Looper"]])()}}>{"Looper"}</Button>
-						</div>
-					</section>
+					{/*<Section title="_Controls-All" heading={false}>
+						<Row title="_Modes-Native">
+							<Button onClick={() => {send_MIDI([["Mode_Stomps" ]])}}>{"Stomps"   }</Button>
+							<Button onClick={() => {send_MIDI([["Mode_Default"]])}}>{"Snapshots"}</Button>
+							<Button onClick={() => {send_MIDI([["Mode_Edit"   ]])}}>{"Edit"     }</Button>
+							<Button onClick={() => {send_MIDI([["Mode_Toggle" ]])}}>{"Toggle"   }</Button>
+						</Row>
+						<Row title="_Utilities">
+							<Button onClick={() => {send_MIDI([["Tuner" ]])}}>{"Tuner" }</Button>
+							<Button onClick={() => {send_MIDI([["Looper"]])}}>{"Looper"}</Button>
+						</Row>
+					</Section>*/}
 
 					<br/>
 
-					<section class="Footswitches">
-						<h2>{"Footswitches"}</h2>
-						<div class="Row">
-							<Button onClick={async () => {Helix.send_CC_Values([["FS1" ]])()}}>{"1" }</Button>
-							<Button onClick={async () => {Helix.send_CC_Values([["FS2" ]])()}}>{"2" }</Button>
-							<Button onClick={async () => {Helix.send_CC_Values([["FS3" ]])()}}>{"3" }</Button>
-							<Button onClick={async () => {Helix.send_CC_Values([["FS4" ]])()}}>{"4" }</Button>
-							<Button onClick={async () => {Helix.send_CC_Values([["FS5" ]])()}}>{"5" }</Button>
-						</div>
-						<div class="Row">
-							<Button onClick={async () => {Helix.send_CC_Values([["FS7" ]])()}}>{"7" }</Button>
-							<Button onClick={async () => {Helix.send_CC_Values([["FS8" ]])()}}>{"8" }</Button>
-							<Button onClick={async () => {Helix.send_CC_Values([["FS9" ]])()}}>{"9" }</Button>
-							<Button onClick={async () => {Helix.send_CC_Values([["FS10"]])()}}>{"10"}</Button>
-							<Button onClick={async () => {Helix.send_CC_Values([["FS11"]])()}}>{"11"}</Button>
-						</div>
-					</section>
+					<Section title="Setlists">
+						<Row>
+							<Button onClick={() => {send_MIDI(Helix.Setlist(0))}}>{"1"}</Button>
+							<Button onClick={() => {send_MIDI(Helix.Setlist(1))}}>{"2"}</Button>
+							<Button onClick={() => {send_MIDI(Helix.Setlist(2))}}>{"3"}</Button>
+							<Button onClick={() => {send_MIDI(Helix.Setlist(3))}}>{"4"}</Button>
+							<Button onClick={() => {send_MIDI(Helix.Setlist(4))}}>{"5"}</Button>
+							<Button onClick={() => {send_MIDI(Helix.Setlist(5))}}>{"6"}</Button>
+							<Button onClick={() => {send_MIDI(Helix.Setlist(6))}}>{"7"}</Button>
+							<Button onClick={() => {send_MIDI(Helix.Setlist(7))}}>{"8"}</Button>
+						</Row>
+					</Section>
+
+					<Section title="Snapshots">
+						<Row>
+							<Button onClick={() => {send_MIDI(Helix.Snapshot(0))}}>{"1"}</Button>
+							<Button onClick={() => {send_MIDI(Helix.Snapshot(1))}}>{"2"}</Button>
+							<Button onClick={() => {send_MIDI(Helix.Snapshot(2))}}>{"3"}</Button>
+							<Button onClick={() => {send_MIDI(Helix.Snapshot(3))}}>{"4"}</Button>
+							<Button onClick={() => {send_MIDI(Helix.Snapshot(4))}}>{"5"}</Button>
+							<Button onClick={() => {send_MIDI(Helix.Snapshot(5))}}>{"6"}</Button>
+							<Button onClick={() => {send_MIDI(Helix.Snapshot(6))}}>{"7"}</Button>
+							<Button onClick={() => {send_MIDI(Helix.Snapshot(7))}}>{"8"}</Button>
+						</Row>
+					</Section>
+
+					<Section title="Footswitches">
+						<Row>
+							<Button onClick={() => {send_MIDI([["FS1" ]])}}>{"1"}</Button>
+							<Button onClick={() => {send_MIDI([["FS2" ]])}}>{"2"}</Button>
+							<Button onClick={() => {send_MIDI([["FS3" ]])}}>{"3"}</Button>
+							<Button onClick={() => {send_MIDI([["FS4" ]])}}>{"4"}</Button>
+							<Button onClick={() => {send_MIDI([["FS5" ]])}}>{"5"}</Button>
+						</Row>
+						<Row>
+							<Button onClick={() => {send_MIDI([["FS7" ]])}}>{"7" }</Button>
+							<Button onClick={() => {send_MIDI([["FS8" ]])}}>{"8" }</Button>
+							<Button onClick={() => {send_MIDI([["FS9" ]])}}>{"9" }</Button>
+							<Button onClick={() => {send_MIDI([["FS10"]])}}>{"10"}</Button>
+							<Button onClick={() => {send_MIDI([["FS11"]])}}>{"11"}</Button>
+						</Row>
+					</Section>
 
 				</main>
 			</HopeProvider>
+		)
+	}
+
+
+//####################################################################################################################//
+//##>  Components                                                                                                   ##//
+//####################################################################################################################//
+
+	function Section(props:ParentProps<{
+		title:    string
+		heading?: boolean
+	}>){
+		const {
+			children,
+			title,
+			heading = ()=>true,
+		} = destructure(props)
+
+		return (
+			<section classList={{SECTION:true, [title()]:true}}>
+				{(heading()) && (
+					<h2>{title()}</h2>
+				)}
+				{children}
+			</section>
+		)
+	}
+
+	function Row(props:ParentProps<{
+		title?: string
+	}>){
+		const {
+			children,
+			title,
+		} = destructure(props)
+
+		return (
+			<div class="ROW">
+				{(title?.()) && (
+					<h2>{title()}</h2>
+				)}
+				{children}
+			</div>
 		)
 	}

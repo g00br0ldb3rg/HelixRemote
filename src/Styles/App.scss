@@ -1,21 +1,50 @@
 
+//####################################################################################################################//
+//##>  Page                                                                                                         ##//
+//####################################################################################################################//
+
+html,
 body{
-	background: var(--S1_1);
-	color:      var(--S1_7);
+	height: 100%;
+}
+
+body{
+	display:         flex;
+	align-items:     center;
+	justify-content: center;
+	background:      var(--S1_1);
+	color:           var(--S1_7);
 }
 
 *{
 	user-select:  none;
 }
 
-section{
-	margin: 1.5rem;
-}
+
+//####################################################################################################################//
+//##>  Elements                                                                                                     ##//
+//####################################################################################################################//
 
 button{
 	margin: 0.5rem;
 }
 
-.Footswitches > .Row > button{
-	width: 3rem;
+h2{
+	margin-bottom: 0.15rem;
 }
+
+
+//####################################################################################################################//
+//##>  Components                                                                                                   ##//
+//####################################################################################################################//
+
+.SECTION{
+	margin: 1.5rem;
+}
+
+.SECTION.Modes             > .ROW > button{width:6rem;  }
+.SECTION._Modes-Available  > .ROW > button{width:8rem;  }
+.SECTION._Modes-Navigation > .ROW > button{width:8rem;  }
+.SECTION.Setlists          > .ROW > button{width:2.5rem;}
+.SECTION.Snapshots         > .ROW > button{width:2.5rem;}
+.SECTION.Footswitches      > .ROW > button{width:2.5rem;}

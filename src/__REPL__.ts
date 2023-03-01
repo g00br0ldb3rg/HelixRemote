@@ -28,7 +28,7 @@ import {
 
 	let matched = false
 
-	const history = state.context._history
+	const history = state.context._path
 
 	const basePaths = getShortestPaths(ModeTransitions, {
 		//filter: ((state) => {
@@ -40,8 +40,8 @@ import {
 
 	const target =
 		Object.values(basePaths)
-		.filter(path => isEqual(history, path.state.context._history))
-		//.filter(path => isEqual(history, path.paths[0]?.segments[0]?.state.context._history))
+		.filter(path => isEqual(history, path.state.context._path))
+		//.filter(path => isEqual(history, path.paths[0]?.segments[0]?.state.context._path))
 
 	target
 
@@ -71,7 +71,7 @@ import {
 
 	function HistoryString(context:any){
 		//console.log({context})
-		return context._history.join(".")
+		return context._path.join(".")
 	}
 	//function HistoryString({history}:Context)
 		//{return history.join(".")}
