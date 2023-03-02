@@ -3,16 +3,7 @@ export {}
 console.clear()
 
 //###  App  ###//
-import {ModeTransitions} from "./App/Machines/ModeTransitions/index.js"
-
-//###  NPM  ###//
-import {isEqual} from "lodash-es"
-import {interpret} from "xstate"
-import {
-	getSimplePaths,
-	getShortestPaths,
-	getPathFromEvents,
-} from "@xstate/graph"
+import {Logger} from "./Utilities/Logger.js"
 
 
 
@@ -20,58 +11,54 @@ import {
 //##>  Script                                                                                                       ##//
 //####################################################################################################################//
 
-	const modeTransitions = interpret(ModeTransitions)
-	modeTransitions.start()
-	modeTransitions.send("TO_STOMPS")
-	modeTransitions.send("TO_LOOPER")
-	const state = modeTransitions.getSnapshot()
 
-	let matched = false
+	const {logger, log} = Logger({
 
-	const history = state.context._path
+		name:  "App",
+		level: "trace",
 
-	const basePaths = getShortestPaths(ModeTransitions, {
-		//filter: ((state) => {
+		//prefix({level}, {name}){
+		//	return `[${name}][${level.toUpperCase()}]`
+		//},
 
-		//	return false
-		//})
-		//events: {},
+		//useOnlyCustomLevels: true,
+		//customLevels: {
+		//	silent: Infinity,
+		//	fatal:  60,
+		//	error:  50,
+		//	warn:   40,
+		//	info:   30,
+		//	debug:  20,
+		//	trace:  10,
+		//}
+
+		//transport: {
+		//	target: "pino-pretty",
+		//	options: <PrettyOptions>{
+		//		ignore: [
+		//			"hostname",
+		//			"pid",
+		//		].join(","),
+		//	}
+		//},
+
 	})
 
-	const target =
-		Object.values(basePaths)
-		.filter(path => isEqual(history, path.state.context._path))
-		//.filter(path => isEqual(history, path.paths[0]?.segments[0]?.state.context._path))
-
-	target
-
-	//for(const [key, basePath] of Object.entries(basePaths)){
-	//	//console.log(`@@@ ${key}`)
-	//	for(const path of basePath.paths){
-	//		//console.log(`  @ Segment`)
-	//		for(const segment of path.segments){
-	//			//console.log(segment.event)
-	//		}
-	//	}
-	//	//if(HistoryString(basePath.state.context) == "Presets"){
-	//	//	console.log({key})
-	//	//	//console.log({key, ...basePath})
-	//	//	console.log(basePath.paths)
-	//	//}
-	//}
+	//pinoDebug(logger, {})
 
 
 
 
-
-
-
-
-
-
-	function HistoryString(context:any){
-		//console.log({context})
-		return context._path.join(".")
+	function x(){
+		log.info("-------------------------------")
+		//log.fatal ("@@@ fatal @@@", {lol:"YEEEEEE", wat:new Date()})
+		//log.error ("@@@ error @@@", {lol:"YEEEEEE", wat:new Date()})
+		//log.warn  ("@@@ warn  @@@", {lol:"YEEEEEE", wat:new Date()})
+		//log.info  ("@@@ info  @@@", {lol:"YEEEEEE", wat:new Date()})
+		log.debug ("@@@ debug @@@", {lol:"YEEEEEE", wat:new Date()})
+		//log.trace ("@@@ trace @@@", {lol:"YEEEEEE", wat:new Date()})
+		log.info("-------------------------------")
 	}
-	//function HistoryString({history}:Context)
-		//{return history.join(".")}
+
+	;(globalThis as any).x = x
+	x()

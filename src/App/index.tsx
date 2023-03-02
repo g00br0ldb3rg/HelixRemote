@@ -1,12 +1,12 @@
 //###  App  ###//
-import {ModeTransitions} from "./Machines/ModeTransitions/index.js"
-import {Helix          } from "Utilities/Helix.js"
-import * as MIDI         from "Utilities/MIDI.js"
-import {useMachine}      from "Utilities/XState-Solid.js"
+import {ModeTransitions      } from "./Machines/ModeTransitions/index.js"
+import {MIDI as MIDI_Settings} from "Settings/index.js"
+import {Helix                } from "Utilities/Helix.js"
+import * as MIDI               from "Utilities/MIDI.js"
+import {useMachine}            from "Utilities/XState-Solid.js"
+import {wait      }            from "Utilities/Wait"
 
 //###  NPM  ###//
-import {atom       } from "solid-use"
-import {inspect    } from "@xstate/inspect"
 import {destructure} from "@solid-primitives/destructure"
 import {
 	For,
@@ -47,26 +47,43 @@ import {
 
 		function send(event:ModeTransitions.EventName){
 			modeTransitions.send(event)
-			console.log(JSON.stringify({"@":"FINISHED", state:state.value}))
+			log.debug({"@":"FINISHED", state:state.value})
 		}
 
 		onMount(async ()=>{
-			const midi =
-				await navigator.requestMIDIAccess()
-				.catch((error) => {throw Error(error)})
+
+			const midi = await Promise.race([
+				new Promise<WebMidi.MIDIAccess>(async (resolve) => {
+					const midi =
+						await navigator.requestMIDIAccess()
+						.catch((error) => {throw Error(error)})
+
+					resolve(midi)
+				}),
+				new Promise<void>(async (resolve) => {
+					await wait(MIDI_Settings.timeout)
+					resolve()
+				}),
+			])
+
+			if(!midi){throw new MIDI.Error("`MIDIAccess` connection was unsuccessful.")}
+			else     {log.debug("`MIDIAccess` connected")                              }
 
 			const helix =
 				[...midi.outputs.values()]
 				.filter((output) => MIDI.Device.is_Helix(output.name))[0]
 
-			if(!helix)
-				{throw Error("Helix not connected")}
+			if(!helix){throw new MIDI.Error("Helix device is not connected.")}
+			else      {log.debug("Helix connected")                          }
 
 			Helix.initialize({midi, helix})
 		})
 
 		return (
-			<HopeProvider config={{initialColorMode:"dark"}} enableCssReset={false}>
+			<HopeProvider
+				config         = {{initialColorMode:"dark"}}
+				enableCssReset = {false                    }
+			>
 				<main>
 
 					{/*<Section title="_Modes-Available">

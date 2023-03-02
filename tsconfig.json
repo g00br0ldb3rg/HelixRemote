@@ -5,6 +5,7 @@
 
 		"paths": {
 			"App/*":       ["./src/App/*"      ],
+			"Globals/*":   ["./src/Globals/*"  ],
 			"Settings/*":  ["./src/Settings/*" ],
 			"Styles/*":    ["./src/Styles/*"   ],
 			"Utilities/*": ["./src/Utilities/*"],
@@ -62,6 +63,7 @@
   },
 
 	"include": [
+		"./**/*.d.ts",
 		"./src/**/*.ts",  "./src/**/*.tsx"
 	]
 

@@ -54,10 +54,13 @@ import {MIDI as MIDI_Settings} from "Settings/index.js"
 
 				const eventGroups = (Helix._midi_Events.queue.shift() ?? Helix._midi_Events.noEvent)
 
-				if(eventGroups.length > 0 ){console.log(JSON.stringify({
-					current:   eventGroups,
-					remaining: Helix._midi_Events.queue,
-				}))}
+				if(eventGroups.length > 0){
+					log.debug({
+						current:   JSON.stringify(eventGroups             ),
+						remaining: JSON.stringify(Helix._midi_Events.queue),
+					})
+				}
+
 				for(const group of eventGroups){
 					for(const entry of group){
 						const event =

@@ -8,6 +8,7 @@ import "Styles/HopeUI.scss"
 import "Styles/App.scss"
 
 //###  App  ###//
+import "Globals/index.js"
 import {App} from "./App"
 
 //###  NPM  ###//

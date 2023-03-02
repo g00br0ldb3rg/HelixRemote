@@ -141,8 +141,8 @@ import {
 		actions: {
 			Pop_Path: assign(({_path}) => ({_path:_path.slice(0, (_path.length - 1))})),
 
-			Log_InvalidEvent ({_path}, {type}, {state:{value}}){console.log(JSON.stringify({"@":"!!! INVALID_EVENT !!!", event:type, state:value, _path}))},
-			Log_ModePersisted({_path}, {type}, {state:{value}}){console.log(JSON.stringify({"@":"MODE_PERSISTED",        event:type, state:value, _path}))},
+			Log_InvalidEvent ({_path}, {type}, {state:{value}}){log.debug({"@":"!!! INVALID_EVENT !!!", event:type, state:value, path:JSON.stringify(_path)})},
+			Log_ModePersisted({_path}, {type}, {state:{value}}){log.debug({"@":"MODE_PERSISTED",        event:type, state:value, path:JSON.stringify(_path)})},
 		},
 
 	})
@@ -199,7 +199,7 @@ import {
 
 	function Log_Entry(to:string){
 		return (({_path}:Context, {type}:Event, {state:{value}}:any) => {
-			console.log(JSON.stringify({"@":"ENTRY", to, event:type, state:value, _path}))
+			log.debug({"@":"ENTRY", to, event:type, state:value, path:JSON.stringify(_path)})
 			log_Delimiter()
 		})
 	}
@@ -209,10 +209,10 @@ import {
 		{from:string, to:string}
 	){
 		return (({_path}:Context, {type}:Event, {state:{value}}:any) => {
-			console.log(JSON.stringify({"@":"TRANSITION", from, to, event:type, state:value, _path}))
+			log.debug({"@":"TRANSITION", from, to, event:type, state:value, path:JSON.stringify(_path)})
 		})
 	}
 
 	const log_Delimiter = debounce(() => {
-		console.log("-".repeat(90))
+		log.debug("-".repeat(90))
 	}, 100)

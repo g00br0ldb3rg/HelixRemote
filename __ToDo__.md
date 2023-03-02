@@ -38,6 +38,14 @@
     - update footswitch UI
     - reset @ [Setlist, Preset] change
 
+  - README:
+    - Requirements:
+      - Line 6 Helix Floor connected to computer via USB
+        - update this if you end up implementing a Client/Server method to do this wirelessly
+        - Client/Server probably not worth doing... HX Edit needs to be wired and solo-HelixRemote isn't as useful as HX Edit + HelixRemote
+      - setting for 8-Snapshots
+        - edit this line to provide more detail
+
 
 //####################################################################################################################//
 //##>  Future                                                                                                       ##//
