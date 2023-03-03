@@ -1,28 +1,45 @@
 
-  - implement logging library
-    - implement @ machine utilities
-    - implement @ package/workspace scripts 
-      - "default":          warn ?
-      - `{script}-verbose`: verbose
-
   - implement:
-    - remaining MIDI functions from spreadsheet
+
+    - reset `ModeTransitions` machine to `Snapshots` state when:
+      - [Setlist, Preset] changed
+      - `Reset` action executed
+
+    - MIDI
+      - helix connection status indicator @ UI
+        - change error to warning
+        - attempt connection on new MIDI devices
+
     - footswitch UI
       - Edit:       Numbering @ Stomps
       - Looper:     Looper UI
       - Presets:    Numbering @ Presets,   Arrows   @ [1,7]
       - Snapshots:  Numbering @ Snapshots, Disabled @ [1,7]
       - Stomps:     Numbering @ Stomps
+
     - MIDI log from Helix @ console
-    - reset `ModeTransitions` machine to `Snapshots` state when [Setlist, Preset] changed
       - from [UI, Helix]
       - prevent transition/entry/etc actions
       - add manual reset button @ UI
+
     - indicator for current [Setlist, Snapshot]
       - possible to initialize on Helix connection ?
         - try
           - [App  .start, Helix.start]
           - [Helix.start, App  .start]
+
+    - add state machines for MIDI spec
+      - NOTE
+        - consider reducing API before implementing everything
+          - delegate to HX Edit
+      - Mode.Looper
+        - Active
+          - looper controls
+            - {direction, speed, etc}
+        - Inactive
+      - Mode.Edit
+        - Navigate_ParameterPage_Previous
+      - ???
 
   - new features:
     - Piano UI for Synth
@@ -37,6 +54,7 @@
   - `LooperControls` machine
     - update footswitch UI
     - reset @ [Setlist, Preset] change
+    - UI for automated duration
 
   - README:
     - Requirements:

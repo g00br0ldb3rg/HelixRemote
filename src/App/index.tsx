@@ -47,7 +47,7 @@ import {
 
 		function send(event:ModeTransitions.EventName){
 			modeTransitions.send(event)
-			log.debug({"@":"FINISHED", state:state.value})
+			log.Helix.debug({"@":"FINISHED", state:JSON.stringify(state.value)})
 		}
 
 		onMount(async ()=>{
@@ -67,14 +67,14 @@ import {
 			])
 
 			if(!midi){throw new MIDI.Error("`MIDIAccess` connection was unsuccessful.")}
-			else     {log.debug("`MIDIAccess` connected")                              }
+			else     {log.MIDI.debug("`MIDIAccess` connected")                         }
 
 			const helix =
 				[...midi.outputs.values()]
 				.filter((output) => MIDI.Device.is_Helix(output.name))[0]
 
 			if(!helix){throw new MIDI.Error("Helix device is not connected.")}
-			else      {log.debug("Helix connected")                          }
+			else      {log.MIDI.debug("Helix connected")                     }
 
 			Helix.initialize({midi, helix})
 		})
@@ -130,7 +130,9 @@ import {
 
 					<Section title="Utilities">
 						<Row>
-							<Button onClick={() => {send_MIDI([["Tuner"]])}}>{"Tuner"}</Button>
+							<Button onClick={() => {send_MIDI([["Tuner"    ],                                 ])}}>{"Tuner"    }</Button>
+							<Button onClick={() => {send_MIDI([["Tempo_Tap"],                                 ])}}>{"Tap Tempo"}</Button>
+							<Button onClick={() => {send_MIDI([["Mode_Edit"], ["Mode_Stomps"], ["Mode_Toggle"]])}}>{"Reset"    }</Button>
 						</Row>
 					</Section>
 
@@ -149,8 +151,8 @@ import {
 
 					<br/>
 
-					<Section title="Setlists">
-						<Row>
+					<Section title="Navigation" heading={false}>
+						<Row title="Navigation.Setlists">
 							<Button onClick={() => {send_MIDI(Helix.Setlist(0))}}>{"1"}</Button>
 							<Button onClick={() => {send_MIDI(Helix.Setlist(1))}}>{"2"}</Button>
 							<Button onClick={() => {send_MIDI(Helix.Setlist(2))}}>{"3"}</Button>
@@ -160,10 +162,10 @@ import {
 							<Button onClick={() => {send_MIDI(Helix.Setlist(6))}}>{"7"}</Button>
 							<Button onClick={() => {send_MIDI(Helix.Setlist(7))}}>{"8"}</Button>
 						</Row>
-					</Section>
-
-					<Section title="Snapshots">
-						<Row>
+						<Row title="Navigation.Presets">
+							<Range onChange={(value) => {send_MIDI(Helix.Preset(value))}}>{"Preset"}</Range>
+						</Row>
+						<Row title="Navigation.Snapshots">
 							<Button onClick={() => {send_MIDI(Helix.Snapshot(0))}}>{"1"}</Button>
 							<Button onClick={() => {send_MIDI(Helix.Snapshot(1))}}>{"2"}</Button>
 							<Button onClick={() => {send_MIDI(Helix.Snapshot(2))}}>{"3"}</Button>
@@ -174,6 +176,8 @@ import {
 							<Button onClick={() => {send_MIDI(Helix.Snapshot(7))}}>{"8"}</Button>
 						</Row>
 					</Section>
+
+					<br/>
 
 					<Section title="Footswitches">
 						<Row>
@@ -192,6 +196,75 @@ import {
 						</Row>
 					</Section>
 
+					<br/>
+
+					<Section title="Looper" heading={false}>
+						<Row title="Looper.Transport">
+							<Button onClick={() => {send_MIDI([["Looper_Transport_Overdub" ]])}}>{"Overdub" }</Button>
+							<Button onClick={() => {send_MIDI([["Looper_Transport_Play"    ]])}}>{"Play"    }</Button>
+							<Button onClick={() => {send_MIDI([["Looper_Transport_PlayOnce"]])}}>{"PlayOnce"}</Button>
+							<Button onClick={() => {send_MIDI([["Looper_Transport_Record"  ]])}}>{"Record"  }</Button>
+							<Button onClick={() => {send_MIDI([["Looper_Transport_Stop"    ]])}}>{"Stop"    }</Button>
+						</Row>
+						<Row title="Looper.Utilities">
+							<Button onClick={() => {send_MIDI([["Looper_Toggle_UndoRedo"]])}}>{"UndoRedo"}</Button>
+						</Row>
+						<Row title="Looper.Speed">
+							<Button onClick={() => {send_MIDI([["Looper_Speed_Full"]])}}>{"Full"}</Button>
+							<Button onClick={() => {send_MIDI([["Looper_Speed_Half"]])}}>{"Half"}</Button>
+						</Row>
+						<Row title="Looper.Direction">
+							<Button onClick={() => {send_MIDI([["Looper_Direction_Forward"]])}}>{"Forward"}</Button>
+							<Button onClick={() => {send_MIDI([["Looper_Direction_Reverse"]])}}>{"Reverse"}</Button>
+						</Row>
+					</Section>
+
+					<br/>
+
+					<Section title="Navigate" heading={false}>
+						<Row title="Navigate.ParameterPages">
+							<Button onClick={() => {send_MIDI([["Navigate_ParameterPage_Previous"]])}}>{"Previous"}</Button>
+							<Button onClick={() => {send_MIDI([["Navigate_ParameterPage_Next"    ]])}}>{"Next"    }</Button>
+						</Row>
+						<Row title="Navigate.Presets">
+							<Button onClick={() => {send_MIDI([["Navigate_Preset_Previous"]])}}>{"Previous"}</Button>
+							<Button onClick={() => {send_MIDI([["Navigate_Preset_Next"    ]])}}>{"Next"    }</Button>
+						</Row>
+					</Section>
+
+					<br/>
+
+					<Section title="Parameters">
+						<Row>
+							<Range onInput={(value) => {send_MIDI(Helix.Parameter_1(value))}}>{"1"}</Range>
+							<Range onInput={(value) => {send_MIDI(Helix.Parameter_2(value))}}>{"2"}</Range>
+							<Range onInput={(value) => {send_MIDI(Helix.Parameter_3(value))}}>{"3"}</Range>
+							<Range onInput={(value) => {send_MIDI(Helix.Parameter_4(value))}}>{"4"}</Range>
+							<Range onInput={(value) => {send_MIDI(Helix.Parameter_5(value))}}>{"5"}</Range>
+							<Range onInput={(value) => {send_MIDI(Helix.Parameter_6(value))}}>{"6"}</Range>
+						</Row>
+					</Section>
+
+					<Section title="Expression" heading={false}>
+						<Row title="Expression.Values">
+							<Range onInput={(value) => {send_MIDI(Helix.Expression_1(value))}}>{"1"}</Range>
+							<Range onInput={(value) => {send_MIDI(Helix.Expression_2(value))}}>{"2"}</Range>
+							<Range onInput={(value) => {send_MIDI(Helix.Expression_3(value))}}>{"3"}</Range>
+						</Row>
+						<Row title="Expression.Utilities">
+							<Button onClick={() => {send_MIDI([["ExpressionPedal_Toggle"]])}}>{"Toggle_Pedal"}</Button>
+						</Row>
+					</Section>
+
+					<br/>
+
+					<Section title="PlayEdit">
+						<Row>
+							<Button onClick={() => {send_MIDI([["PlayEdit_Toggle"   ]])}}>{"Toggle"}</Button>
+							<Button onClick={() => {send_MIDI([["PlayEdit_ToggleOff"]])}}>{"Off"   }</Button>
+						</Row>
+					</Section>
+
 				</main>
 			</HopeProvider>
 		)
@@ -202,6 +275,29 @@ import {
 //##>  Components                                                                                                   ##//
 //####################################################################################################################//
 
+	function Range(props:ParentProps<{
+		onChange?: ((value:number) => void)
+		onInput?:  ((value:number) => void)
+	}>){
+		return (
+			<div>
+				<span>
+					{props.children}
+				</span>
+
+				<input
+					type     = {"range"                                                               }
+					value    = {0                                                                     }
+					min      = {0                                                                     }
+					max      = {127                                                                   }
+					step     = {1                                                                     }
+					onChange = {({currentTarget:{valueAsNumber}}) => {props.onChange?.(valueAsNumber)}}
+					onInput  = {({currentTarget:{valueAsNumber}}) => {props.onInput ?.(valueAsNumber)}}
+				/>
+			</div>
+		)
+	}
+
 	function Section(props:ParentProps<{
 		title:    string
 		heading?: boolean
@@ -209,7 +305,7 @@ import {
 		const {
 			children,
 			title,
-			heading = ()=>true,
+			heading = (() => true),
 		} = destructure(props)
 
 		return (

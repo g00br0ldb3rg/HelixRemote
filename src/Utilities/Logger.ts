@@ -3,8 +3,8 @@ import type {
 	Logger        as PinoLogger,
 	LoggerOptions as PinoOptions,
 } from "pino"
-import type {PrettyOptions                      } from "pino-pretty"
-import pino                                       from "pino"
+import type {PrettyOptions} from "pino-pretty"
+import pino                 from "pino"
 
 
 //####################################################################################################################//
@@ -14,7 +14,7 @@ import pino                                       from "pino"
 	export type Logger<Options extends Logger.Options> =
 		PinoLogger<
 			& Omit<Options, "level">
-			& {level?:Logger.LogLevel}
+			& {level?:Logger.Level}
 		>
 
 
@@ -62,7 +62,7 @@ import pino                                       from "pino"
 
 	export namespace Logger{
 
-		export type LogLevel =
+		export type Level =
 			| "silent"
 			| "fatal"
 			| "error"
@@ -72,7 +72,7 @@ import pino                                       from "pino"
 			| "trace"
 
 		export type LogObject =
-			{[K in Exclude<LogLevel, "silent">]: LogFunction}
+			{[K in Exclude<Level, "silent">]: LogFunction}
 
 		export type LogFunction = {
 			(data:   object,             ): void;
@@ -88,7 +88,7 @@ import pino                                       from "pino"
 				| "msgPrefix"
 			>
 			& {
-				level:   LogLevel
+				level:   Level
 				prefix?: PrefixFunction
 			}
 

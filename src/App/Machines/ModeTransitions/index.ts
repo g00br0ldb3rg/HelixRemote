@@ -2,7 +2,10 @@
 import {Helix} from "Utilities/Helix.js"
 
 //###  NPM  ###//
-import {debounce} from "lodash-es"
+import {
+	debounce,
+	throttle,
+} from "lodash-es"
 import {
 	assign,
 	createMachine,
@@ -122,9 +125,9 @@ import {
 			Stomps: {
 				entry: Log_Entry("Stomps"),
 				on: {
-					_EXIT:         {target:"Snapshots", actions:["Pop_Path",          Send_MIDI([["Mode_Default"]]), Log_Transition({from:"Stomps", to:"Snapshots"})]},
-					_TO_EDIT:      {target:"Edit",      actions:[Push_Path("Edit"  ), Send_MIDI([["Mode_Edit"   ]]), Log_Transition({from:"Stomps", to:"Edit"     })]},
-					_TO_LOOPER:    {target:"Looper",    actions:[Push_Path("Looper"), Send_MIDI([["Looper"      ]]), Log_Transition({from:"Stomps", to:"Looper"   })]},
+					_EXIT:         {target:"Snapshots", actions:["Pop_Path",          Send_MIDI([["Mode_Default"   ]]), Log_Transition({from:"Stomps", to:"Snapshots"})]},
+					_TO_EDIT:      {target:"Edit",      actions:[Push_Path("Edit"  ), Send_MIDI([["Mode_Edit"      ]]), Log_Transition({from:"Stomps", to:"Edit"     })]},
+					_TO_LOOPER:    {target:"Looper",    actions:[Push_Path("Looper"), Send_MIDI([["Looper_Activate"]]), Log_Transition({from:"Stomps", to:"Looper"   })]},
 					_TO_SNAPSHOTS: {actions:[raise("_EXIT"        ),                    ]},
 					TO_EDIT:       {actions:[raise("_TO_EDIT"     ),                    ]},
 					TO_LOOPER:     {actions:[raise("_TO_LOOPER"   ),                    ]},
@@ -141,8 +144,8 @@ import {
 		actions: {
 			Pop_Path: assign(({_path}) => ({_path:_path.slice(0, (_path.length - 1))})),
 
-			Log_InvalidEvent ({_path}, {type}, {state:{value}}){log.debug({"@":"!!! INVALID_EVENT !!!", event:type, state:value, path:JSON.stringify(_path)})},
-			Log_ModePersisted({_path}, {type}, {state:{value}}){log.debug({"@":"MODE_PERSISTED",        event:type, state:value, path:JSON.stringify(_path)})},
+			Log_InvalidEvent ({_path}, {type}, {state:{value}}){log.Helix.debug({"@":"!!! INVALID_EVENT !!!", event:type, state:value, path:JSON.stringify(_path)})},
+			Log_ModePersisted({_path}, {type}, {state:{value}}){log.Helix.debug({"@":"MODE_PERSISTED",        event:type, state:value, path:JSON.stringify(_path)})},
 		},
 
 	})
@@ -199,8 +202,8 @@ import {
 
 	function Log_Entry(to:string){
 		return (({_path}:Context, {type}:Event, {state:{value}}:any) => {
-			log.debug({"@":"ENTRY", to, event:type, state:value, path:JSON.stringify(_path)})
-			log_Delimiter()
+			log.Helix.debug({"@":"ENTRY", to, event:type, state:value, path:JSON.stringify(_path)})
+			log_Delimiter.NavigationEnd()
 		})
 	}
 
@@ -209,10 +212,13 @@ import {
 		{from:string, to:string}
 	){
 		return (({_path}:Context, {type}:Event, {state:{value}}:any) => {
-			log.debug({"@":"TRANSITION", from, to, event:type, state:value, path:JSON.stringify(_path)})
+			log_Delimiter.NavigationStart()
+			log.Helix.debug({"@":"TRANSITION", from, to, event:type, state:value, path:JSON.stringify(_path)})
 		})
 	}
 
-	const log_Delimiter = debounce(() => {
-		log.debug("-".repeat(90))
-	}, 100)
+	function log_Delimiter()
+		{log.Helix.debug("-".repeat(90))}
+
+	log_Delimiter.NavigationStart = throttle(log_Delimiter, 100)
+	log_Delimiter.NavigationEnd   = debounce(log_Delimiter, 100)
