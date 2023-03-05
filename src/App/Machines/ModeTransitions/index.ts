@@ -65,7 +65,7 @@ import {
 					},
 					FromSnapshots: {
 						on: {
-							_EXIT:         {target:"#ModeTransitions.Snapshots", actions:["Pop_Path", Send_MIDI([["Mode_Default"]]), Log_Transition({from:"Edit", to:"Snapshots"})]},
+							_EXIT:         {target:"#ModeTransitions.Snapshots", actions:["Pop_Path", Send_MIDI([["Mode_Primary"]]), Log_Transition({from:"Edit", to:"Snapshots"})]},
 							_TO_SNAPSHOTS: {actions:[raise("_EXIT"        ),                   ]},
 							TO_SNAPSHOTS:  {actions:[raise("_TO_SNAPSHOTS"),                   ]},
 							TO_STOMPS:     {actions:[raise("TO_SNAPSHOTS" ), raise("TO_STOMPS")]},
@@ -125,7 +125,7 @@ import {
 			Stomps: {
 				entry: Log_Entry("Stomps"),
 				on: {
-					_EXIT:         {target:"Snapshots", actions:["Pop_Path",          Send_MIDI([["Mode_Default"   ]]), Log_Transition({from:"Stomps", to:"Snapshots"})]},
+					_EXIT:         {target:"Snapshots", actions:["Pop_Path",          Send_MIDI([["Mode_Primary"   ]]), Log_Transition({from:"Stomps", to:"Snapshots"})]},
 					_TO_EDIT:      {target:"Edit",      actions:[Push_Path("Edit"  ), Send_MIDI([["Mode_Edit"      ]]), Log_Transition({from:"Stomps", to:"Edit"     })]},
 					_TO_LOOPER:    {target:"Looper",    actions:[Push_Path("Looper"), Send_MIDI([["Looper_Activate"]]), Log_Transition({from:"Stomps", to:"Looper"   })]},
 					_TO_SNAPSHOTS: {actions:[raise("_EXIT"        ),                    ]},
