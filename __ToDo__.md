@@ -4,8 +4,14 @@
 //####################################################################################################################//
 
   - make layouts:
-    - Yoga.720: HXEdit + HelixRemote
-    - iPad:     HelixRemote
+
+    - split `/App/index.tsx` to multiple files
+      - UI Clusters
+      - Setup / Utilities
+    - Layouts:
+      - Yoga.720: HXEdit + HelixRemote
+      - iPad:     HelixRemote
+
   - UI:
     - [tahti-studio/solid-knobs: Primitives for building user-friendly controls with SolidJS.](https://github.com/tahti-studio/solid-knobs)
     - [smastrom/solid-collapse: Tiny and performant collapse component for SolidJS.](https://github.com/smastrom/solid-collapse)

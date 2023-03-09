@@ -186,6 +186,7 @@ import {
 		export type EventName = Event["type"]
 
 		export const Machine = _Machine
+		export type  Machine = (typeof _Machine)
 
 		export function ActualEvent (mode:StateName){return (`_TO_${mode.toUpperCase()}` as EventName)}
 		export function EnsuredEvent(mode:StateName){return (`TO_${mode.toUpperCase()}`  as EventName)}

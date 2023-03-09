@@ -7,7 +7,7 @@ import {Logger as _Logger} from "Utilities/Logger.js"
 //####################################################################################################################//
 
 	export namespace Logger{
-		export const level: _Logger.Level = "info"
+		export const level: _Logger.Level = "debug"
 	}
 
 	export namespace MIDI{
