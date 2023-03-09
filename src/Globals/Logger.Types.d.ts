@@ -6,11 +6,11 @@ type LogObject = import("Utilities/Logger.js").Logger.LogObject
 //##>  Globals                                                                                                      ##//
 //####################################################################################################################//
 
-	declare type log =
+	declare type Log =
 		& LogObject
 		& {
 			Helix: LogObject
 			MIDI:  LogObject
 		}
 
-	declare var log: log
+	declare var Log: Log

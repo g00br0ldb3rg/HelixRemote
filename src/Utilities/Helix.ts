@@ -162,7 +162,7 @@ import {MIDI as MIDI_Settings} from "Settings/index.js"
 		}
 
 		if(eventGroups.length > 0){
-			log.MIDI.debug({
+			Log.MIDI.debug({
 				"@":       "MIDI_Queue",
 				current:   JSON.stringify(eventGroups             ),
 				remaining: JSON.stringify(Helix._midi_Events.queue),

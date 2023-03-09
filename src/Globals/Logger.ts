@@ -14,8 +14,6 @@ import {Logger                   } from "Utilities/Logger.js"
 //##>  Initialize                                                                                                   ##//
 //####################################################################################################################//
 
-	globalThis.log = Logger({name:"App",       level}).log as log
-	log.MIDI       = Logger({name:"App.MIDI",  level}).log
-	log.Helix      = Logger({name:"App.Helix", level}).log
-
-	globalThis.log = (log as log)
+	globalThis.Log = Logger({name:"App",       level}).Log as Log
+	Log.MIDI       = Logger({name:"App.MIDI",  level}).Log
+	Log.Helix      = Logger({name:"App.Helix", level}).Log

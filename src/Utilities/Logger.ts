@@ -27,7 +27,7 @@ import pino                 from "pino"
 		_Logger extends Logger<Options> = Logger<Options>
 	>
 		(options:Options):
-		{logger:_Logger, log:Logger.LogObject}
+		{logger:_Logger, Log:Logger.LogObject}
 	{
 		const [{prefix}, _options] = Options(options)
 
@@ -44,7 +44,7 @@ import pino                 from "pino"
 
 		return {
 			logger,
-			log: {
+			Log: {
 				fatal: (function fatal(message, data=NoData){(logger.fatal  as any)(...LoggerArgs(prefixes.fatal, message, data!))} as Logger.LogFunction),
 				error: (function error(message, data=NoData){(logger.error  as any)(...LoggerArgs(prefixes.error, message, data!))} as Logger.LogFunction),
 				warn : (function warn (message, data=NoData){(logger.warn   as any)(...LoggerArgs(prefixes.warn,  message, data!))} as Logger.LogFunction),

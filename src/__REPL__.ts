@@ -12,7 +12,7 @@ import {Logger} from "./Utilities/Logger.js"
 //####################################################################################################################//
 
 
-	const {logger, log} = Logger({
+	const {logger, Log: log} = Logger({
 
 		name:  "App",
 		level: "trace",
@@ -50,14 +50,14 @@ import {Logger} from "./Utilities/Logger.js"
 
 
 	function x(){
-		log.info("-------------------------------")
-		//log.fatal ("@@@ fatal @@@", {lol:"YEEEEEE", wat:new Date()})
-		//log.error ("@@@ error @@@", {lol:"YEEEEEE", wat:new Date()})
-		//log.warn  ("@@@ warn  @@@", {lol:"YEEEEEE", wat:new Date()})
-		//log.info  ("@@@ info  @@@", {lol:"YEEEEEE", wat:new Date()})
-		log.debug ("@@@ debug @@@", {lol:"YEEEEEE", wat:new Date()})
-		//log.trace ("@@@ trace @@@", {lol:"YEEEEEE", wat:new Date()})
-		log.info("-------------------------------")
+		Log.info("-------------------------------")
+		//Log.fatal ("@@@ fatal @@@", {lol:"YEEEEEE", wat:new Date()})
+		//Log.error ("@@@ error @@@", {lol:"YEEEEEE", wat:new Date()})
+		//Log.warn  ("@@@ warn  @@@", {lol:"YEEEEEE", wat:new Date()})
+		//Log.info  ("@@@ info  @@@", {lol:"YEEEEEE", wat:new Date()})
+		Log.debug ("@@@ debug @@@", {lol:"YEEEEEE", wat:new Date()})
+		//Log.trace ("@@@ trace @@@", {lol:"YEEEEEE", wat:new Date()})
+		Log.info("-------------------------------")
 	}
 
 	;(globalThis as any).x = x

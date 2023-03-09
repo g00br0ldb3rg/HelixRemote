@@ -144,8 +144,8 @@ import {
 		actions: {
 			Pop_Path: assign(({_path}) => ({_path:_path.slice(0, (_path.length - 1))})),
 
-			Log_InvalidEvent ({_path}, {type}, {state:{value}}){log.Helix.debug({"@":"!!! INVALID_EVENT !!!", event:type, state:value, path:JSON.stringify(_path)})},
-			Log_ModePersisted({_path}, {type}, {state:{value}}){log.Helix.debug({"@":"MODE_PERSISTED",        event:type, state:value, path:JSON.stringify(_path)})},
+			Log_InvalidEvent ({_path}, {type}, {state:{value}}){Log.Helix.debug({"@":"!!! INVALID_EVENT !!!", event:type, state:value, path:JSON.stringify(_path)})},
+			Log_ModePersisted({_path}, {type}, {state:{value}}){Log.Helix.debug({"@":"MODE_PERSISTED",        event:type, state:value, path:JSON.stringify(_path)})},
 		},
 
 	})
@@ -186,6 +186,7 @@ import {
 		export type EventName = Event["type"]
 
 		export const Machine = _Machine
+		export type  Machine = (typeof _Machine)
 
 		export function ActualEvent (mode:StateName){return (`_TO_${mode.toUpperCase()}` as EventName)}
 		export function EnsuredEvent(mode:StateName){return (`TO_${mode.toUpperCase()}`  as EventName)}
@@ -202,7 +203,7 @@ import {
 
 	function Log_Entry(to:string){
 		return (({_path}:Context, {type}:Event, {state:{value}}:any) => {
-			log.Helix.debug({"@":"ENTRY", to, event:type, state:value, path:JSON.stringify(_path)})
+			Log.Helix.debug({"@":"ENTRY", to, event:type, state:value, path:JSON.stringify(_path)})
 			log_Delimiter.NavigationEnd()
 		})
 	}
@@ -213,12 +214,12 @@ import {
 	){
 		return (({_path}:Context, {type}:Event, {state:{value}}:any) => {
 			log_Delimiter.NavigationStart()
-			log.Helix.debug({"@":"TRANSITION", from, to, event:type, state:value, path:JSON.stringify(_path)})
+			Log.Helix.debug({"@":"TRANSITION", from, to, event:type, state:value, path:JSON.stringify(_path)})
 		})
 	}
 
 	function log_Delimiter()
-		{log.Helix.debug("-".repeat(90))}
+		{Log.Helix.debug("-".repeat(90))}
 
 	log_Delimiter.NavigationStart = throttle(log_Delimiter, 100)
 	log_Delimiter.NavigationEnd   = debounce(log_Delimiter, 100)
