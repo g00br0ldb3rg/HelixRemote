@@ -3,18 +3,10 @@ import {MIDI_Transitioner} from "../../Utilities/MIDI_Transitioner"
 
 //###  NPM  ###//
 import {
-	actions,
 	assign,
 	createMachine,
 	send,
 } from "xstate"
-
-
-//####################################################################################################################//
-//##>  Aliases                                                                                                      ##//
-//####################################################################################################################//
-
-	const {choose} = actions
 
 
 //####################################################################################################################//
@@ -124,17 +116,6 @@ import {
 			goFrom_Stomps_To_Edit:                 (() => {MIDI_Transitioner.goFrom_Stomps_To_Edit                ()}),
 			goFrom_Stomps_To_Looper:               (() => {MIDI_Transitioner.goFrom_Stomps_To_Looper              ()}),
 			goFrom_Stomps_To_Snapshots:            (() => {MIDI_Transitioner.goFrom_Stomps_To_Snapshots           ()}),
-
-			//goFrom_Presets_To_Stomps:           choose([{actions:(() => [send("RESET")])}]),
-			//goFrom_Presets_To_Snapshots:        choose([{actions:(() => [send("RESET")])}]),
-			//goFrom_Presets_To_Edit:             choose([{actions:(() => [send("RESET")])}]),
-			//goFrom_Snapshots_To_Presets:        choose([{actions:(() => [send("RESET")])}]),
-			//goFrom_EditFromPresets_To_Presets: choose([{actions:(() => [send("RESET")])}]),
-			//goFrom_EditFromStomps_To_Stomps:   choose([{actions:(() => [send("RESET")])}]),
-			//goFrom_Stomps_To_Presets:           choose([{actions:(() => [send("RESET")])}]),
-			//goFrom_Stomps_To_Looper:            choose([{actions:(() => [send("RESET")])}]),
-			//goFrom_Stomps_To_Edit:              choose([{actions:(() => [send("RESET")])}]),
-			//goFrom_Looper_To_Stomps:            choose([{actions:(() => [send("RESET")])}]),
 		},
 
 	})

@@ -3,14 +3,10 @@ import {ModeTransitions        } from "./Machines/ModeTransitions"
 import {MIDI_Transitioner, wait} from "./Utilities/MIDI_Transitioner"
 
 //###  NPM  ###//
-import {onMount   } from "solid-js"
-import {atom      } from "solid-use"
-import {useMachine} from "@xstate/solid"
-import {inspect   } from "@xstate/inspect"
-import {
-	Button,
-	HopeProvider,
-} from "@hope-ui/solid"
+import {onMount             } from "solid-js"
+import {useMachine          } from "@xstate/solid"
+import {inspect             } from "@xstate/inspect"
+import {Button, HopeProvider} from "@hope-ui/solid"
 
 
 //####################################################################################################################//
@@ -43,8 +39,6 @@ import {
 				{throw Error("Helix not connected")}
 
 			MIDI_Transitioner.initialize({midi, helix})
-
-			//helix.send(CC({channel:1, id:68, value:127}))
 		})
 
 		return (
