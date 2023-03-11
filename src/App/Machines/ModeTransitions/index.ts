@@ -1,5 +1,7 @@
 //###  App  ###//
-import {Helix} from "Utilities/Helix.js"
+import type {ModesDemo } from "App/Machines/ModesDemo/index.js"
+import type {UseMachine} from "Utilities/XState-Solid.js"
+import {Helix}           from "Utilities/Helix.js"
 
 //###  NPM  ###//
 import {
@@ -37,12 +39,14 @@ import {
 		preserveActionOrder:        true,
 
 		context: {
-			_path: ["Snapshots"],
+			_modesDemo: (undefined as any as UseMachine<ModesDemo.Machine>),
+			_path:      ["Snapshots"],
 		},
 
 		on: {
-			"_PERSIST_MODE": {actions:["Log_ModePersisted"]},
-			"*":             {actions:["Log_InvalidEvent" ]},
+			_PERSIST_MODE:   {actions:["Log_ModePersisted"                                 ]},
+			_SET_MODES_DEMO: {actions:[assign((_, {modesDemo}) => ({_modesDemo:modesDemo}))]},
+			"*":             {actions:["Log_InvalidEvent"                                  ]},
 		},
 
 		states: {
@@ -66,7 +70,7 @@ import {
 					FromSnapshots: {
 						on: {
 							_EXIT:         {target:"#ModeTransitions.Snapshots", actions:["Pop_Path", Send_MIDI([["Mode_Primary"]]), Log_Transition({from:"Edit", to:"Snapshots"})]},
-							_TO_SNAPSHOTS: {actions:[raise("_EXIT"        ),                   ]},
+							_TO_SNAPSHOTS: {actions:[raise("_EXIT"        ),                   "ModesDemo_To_Snapshots"]},
 							TO_SNAPSHOTS:  {actions:[raise("_TO_SNAPSHOTS"),                   ]},
 							TO_STOMPS:     {actions:[raise("TO_SNAPSHOTS" ), raise("TO_STOMPS")]},
 						},
@@ -74,7 +78,7 @@ import {
 					FromStomps: {
 						on: {
 							_EXIT:        {target:"#ModeTransitions.Stomps", actions:["Pop_Path", Send_MIDI([["Mode_Stomps"]]), Log_Transition({from:"Edit", to:"Stomps"})]},
-							_TO_STOMPS:   {actions:[raise("_EXIT"     ),                      ]},
+							_TO_STOMPS:   {actions:[raise("_EXIT"     ),                      "ModesDemo_To_Stomps"]},
 							TO_SNAPSHOTS: {actions:[raise("TO_STOMPS" ), raise("TO_SNAPSHOTS")]},
 							TO_STOMPS:    {actions:[raise("_TO_STOMPS"),                      ]},
 						},
@@ -86,7 +90,7 @@ import {
 				entry: Log_Entry("Looper"),
 				on: {
 					_EXIT:        {target:"Stomps", actions:["Pop_Path", Send_MIDI([["Mode_Toggle"]]), Log_Transition({from:"Looper", to:"Stomps"})]},
-					_TO_STOMPS:   {actions:[raise("_EXIT"        ),                      ]},
+					_TO_STOMPS:   {actions:[raise("_EXIT"        ),                      "ModesDemo_To_Stomps"]},
 					TO_EDIT:      {actions:[raise("TO_STOMPS"    ), raise("TO_EDIT"     )]},
 					TO_LOOPER:    {actions:[raise("_PERSIST_MODE"),                      ]},
 					TO_PRESETS:   {actions:[raise("TO_SNAPSHOTS" ), raise("TO_PRESETS"  )]},
@@ -99,7 +103,7 @@ import {
 				entry: Log_Entry("Presets"),
 				on: {
 					_EXIT:         {target:"Snapshots", actions:["Pop_Path", Send_MIDI([["Mode_Toggle"]]), Log_Transition({from:"Presets", to:"Snapshots"})]},
-					_TO_SNAPSHOTS: {actions:[raise("_EXIT"        ),                   ]},
+					_TO_SNAPSHOTS: {actions:[raise("_EXIT"        ),                   "ModesDemo_To_Snapshots"]},
 					TO_EDIT:       {actions:[raise("TO_STOMPS"    ), raise("TO_EDIT"  )]},
 					TO_LOOPER:     {actions:[raise("TO_STOMPS"    ), raise("TO_LOOPER")]},
 					TO_PRESETS:    {actions:[raise("_PERSIST_MODE"),                   ]},
@@ -111,9 +115,9 @@ import {
 			Snapshots: {
 				entry: Log_Entry("Snapshots"),
 				on: {
-					_TO_EDIT:     {target:"Edit",    actions:[Push_Path("Edit"   ), Send_MIDI([["Mode_Edit"  ]]), Log_Transition({from:"Snapshots", to:"Edit"   })]},
-					_TO_PRESETS:  {target:"Presets", actions:[Push_Path("Presets"), Send_MIDI([["FS1"        ]]), Log_Transition({from:"Snapshots", to:"Presets"})]},
-					_TO_STOMPS:   {target:"Stomps",  actions:[Push_Path("Stomps" ), Send_MIDI([["Mode_Stomps"]]), Log_Transition({from:"Snapshots", to:"Stomps" })]},
+					_TO_EDIT:     {target:"Edit",    actions:[Push_Path("Edit"   ), Send_MIDI([["Mode_Edit"  ]]), Log_Transition({from:"Snapshots", to:"Edit"   }),"ModesDemo_To_Edit"]},
+					_TO_PRESETS:  {target:"Presets", actions:[Push_Path("Presets"), Send_MIDI([["FS1"        ]]), Log_Transition({from:"Snapshots", to:"Presets"}),"ModesDemo_To_Presets"]},
+					_TO_STOMPS:   {target:"Stomps",  actions:[Push_Path("Stomps" ), Send_MIDI([["Mode_Stomps"]]), Log_Transition({from:"Snapshots", to:"Stomps" }),"ModesDemo_To_Stomps"]},
 					TO_EDIT:      {actions:[raise("_TO_EDIT"     ),                   ]},
 					TO_LOOPER:    {actions:[raise("TO_STOMPS"    ), raise("TO_LOOPER")]},
 					TO_PRESETS:   {actions:[raise("_TO_PRESETS"  ),                   ]},
@@ -126,9 +130,9 @@ import {
 				entry: Log_Entry("Stomps"),
 				on: {
 					_EXIT:         {target:"Snapshots", actions:["Pop_Path",          Send_MIDI([["Mode_Primary"   ]]), Log_Transition({from:"Stomps", to:"Snapshots"})]},
-					_TO_EDIT:      {target:"Edit",      actions:[Push_Path("Edit"  ), Send_MIDI([["Mode_Edit"      ]]), Log_Transition({from:"Stomps", to:"Edit"     })]},
-					_TO_LOOPER:    {target:"Looper",    actions:[Push_Path("Looper"), Send_MIDI([["Looper_Activate"]]), Log_Transition({from:"Stomps", to:"Looper"   })]},
-					_TO_SNAPSHOTS: {actions:[raise("_EXIT"        ),                    ]},
+					_TO_EDIT:      {target:"Edit",      actions:[Push_Path("Edit"  ), Send_MIDI([["Mode_Edit"      ]]), Log_Transition({from:"Stomps", to:"Edit"     }),"ModesDemo_To_Edit"]},
+					_TO_LOOPER:    {target:"Looper",    actions:[Push_Path("Looper"), Send_MIDI([["Looper_Activate"]]), Log_Transition({from:"Stomps", to:"Looper"   }),"ModesDemo_To_Looper"]},
+					_TO_SNAPSHOTS: {actions:[raise("_EXIT"        ),                    "ModesDemo_To_Snapshots"]},
 					TO_EDIT:       {actions:[raise("_TO_EDIT"     ),                    ]},
 					TO_LOOPER:     {actions:[raise("_TO_LOOPER"   ),                    ]},
 					TO_PRESETS:    {actions:[raise("TO_SNAPSHOTS" ), raise("TO_PRESETS")]},
@@ -146,6 +150,12 @@ import {
 
 			Log_InvalidEvent ({_path}, {type}, {state:{value}}){log.Helix.debug({"@":"!!! INVALID_EVENT !!!", event:type, state:value, path:JSON.stringify(_path)})},
 			Log_ModePersisted({_path}, {type}, {state:{value}}){log.Helix.debug({"@":"MODE_PERSISTED",        event:type, state:value, path:JSON.stringify(_path)})},
+
+			ModesDemo_To_Edit     ({_modesDemo}){_modesDemo.send({type:"TO_EDIT",      from_UI:true})},
+			ModesDemo_To_Looper   ({_modesDemo}){_modesDemo.send({type:"TO_LOOPER",    from_UI:true})},
+			ModesDemo_To_Presets  ({_modesDemo}){_modesDemo.send({type:"TO_PRESETS",   from_UI:true})},
+			ModesDemo_To_Snapshots({_modesDemo}){_modesDemo.send({type:"TO_SNAPSHOTS", from_UI:true})},
+			ModesDemo_To_Stomps   ({_modesDemo}){_modesDemo.send({type:"TO_STOMPS",    from_UI:true})},
 		},
 
 	})
@@ -158,7 +168,8 @@ import {
 	export namespace ModeTransitions{
 
 		export type Context = {
-			_path: string[]
+			_modesDemo: UseMachine<ModesDemo.Machine>
+			_path:      string[]
 		}
 
 		export type  StateName  = (typeof StateNames)[number]
@@ -170,7 +181,6 @@ import {
 			"Stomps",
 		] as const
 
-
 		export type Event = (
 			/* Ensured Events */
 			| {type:`TO_${Uppercase<StateName>}`}
@@ -181,6 +191,7 @@ import {
 			/* Internal Events */
 			| {type:"_EXIT"        }
 			| {type:"_PERSIST_MODE"}
+			| {type:"_SET_MODES_DEMO", modesDemo:UseMachine<ModesDemo.Machine>}
 		)
 
 		export type EventName = Event["type"]

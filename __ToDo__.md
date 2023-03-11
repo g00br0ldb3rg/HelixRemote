@@ -1,4 +1,21 @@
 
+<style>
+  *{
+    --viz-color-bg: #000 !important;
+  }
+  [data-testid="panels-view"],
+  [data-testid="controls"]{
+    display: none !important;
+  }
+  [data-testid="canvas-header"]{
+    height:  0px !important;
+    opacity: 0   !important;
+  }
+</style>
+
+
+
+
 //####################################################################################################################//
 //##>  Project Log                                                                                                  ##//
 //####################################################################################################################//

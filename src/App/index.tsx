@@ -1,4 +1,5 @@
 //###  App  ###//
+import {ModesDemo            }  from "./Machines/ModesDemo/index.js"
 import {ModeTransitions      }  from "./Machines/ModeTransitions/index.js"
 import {MIDI as MIDI_Settings}  from "Settings/index.js"
 import {Helix                }  from "Utilities/Helix.js"
@@ -8,10 +9,11 @@ import {wait                  } from "Utilities/Wait"
 
 //###  NPM  ###//
 import {destructure} from "@solid-primitives/destructure"
+import {inspect    } from "@xstate/inspect"
 import {
-	For,
 	onMount,
 	ParentProps,
+	Ref,
 } from "solid-js"
 import {
 	Button,
@@ -38,11 +40,20 @@ import {
 //####################################################################################################################//
 
 	export function App(){
-		//inspect({iframe:false})
+		const $XState_Inspect = document.querySelector<HTMLIFrameElement>("#XState_Inspect")!
+		inspect({iframe:$XState_Inspect})
+
 
 		const modeTransitions = useMachine(ModeTransitions.Machine, {
 			//devTools: true,
 		})
+
+		const modesDemo = useMachine(ModesDemo.Machine, {
+			devTools: true,
+		})
+		;(modesDemo as any)._send = modesDemo.send
+		;(modesDemo as any).send  = ModesDemo.send
+		ModesDemo.start_Queue(modesDemo)
 
 		const {state} = modeTransitions
 
@@ -53,8 +64,11 @@ import {
 				log.Helix.debug({"@":"FINISHED", state:JSON.stringify(state.value)})
 			} as any
 
-		onMount(async ()=>{
+		_send         ({type:"_SET_MODES_DEMO",       modesDemo      })
+		//modesDemo.send({type:"_SET_MODE_TRANSITIONS", modeTransitions})
+		;(modesDemo.service as any)._state.context._modeTransitions = modeTransitions
 
+		onMount(async ()=>{
 			const midi = await Promise.race([
 				new Promise<WebMidi.MIDIAccess>(async (resolve) => {
 					const midi =
@@ -89,7 +103,7 @@ import {
 			>
 				<main>
 
-					<Row>
+					{/*<Row>
 
 						<Column>
 							<Button onClick={() => {send_MIDI([["Tuner"]])}}>{"Tuner"}</Button>
@@ -103,15 +117,15 @@ import {
 
 					</Row>
 
-					<br/>
+					<br/>*/}
 
 					<Row>
 
-						<Column>
+						{/*<Column>
 							<Button onClick={() => {send_MIDI([["Mode_Edit"], ["Mode_Stomps"], ["Mode_Toggle"]])}}>{"Reset"    }</Button>
 						</Column>
 
-						<Spacer/>
+						<Spacer/>*/}
 
 						<Column>
 							<Row>
@@ -129,7 +143,7 @@ import {
 
 					</Row>
 
-					<br/>
+					{/*<br/>
 
 					<Column>
 						<Row>
@@ -165,7 +179,7 @@ import {
 							<Button onClick={() => {send_MIDI(Helix.Snapshot(6))}}>{"7"}</Button>
 							<Button onClick={() => {send_MIDI(Helix.Snapshot(7))}}>{"8"}</Button>
 						</Row>
-					</Section>
+					</Section>*/}
 
 				</main>
 			</HopeProvider>
